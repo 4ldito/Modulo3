@@ -1,8 +1,8 @@
 
-var Promise = require('bluebird');
+let Promise = require('bluebird');
 
-var primerMetodo = function() {
-   var promise = new Promise(function(resolve, reject){
+let primerMetodo = function() {
+   let promise = new Promise(function(resolve, reject){
       setTimeout(function() {
          console.log('Terminó el primer método');
          resolve('a'); //pasamos unos datos para ver como los manejamos
@@ -12,8 +12,8 @@ var primerMetodo = function() {
 };
 
 
-var segundoMetodo = function(datos) {
-   var promise = new Promise(function(resolve, reject){
+let segundoMetodo = function(datos) {
+   let promise = new Promise(function(resolve, reject){
       setTimeout(function() {
          console.log('Terminó el segundo método');
          resolve('segundo');
@@ -22,8 +22,8 @@ var segundoMetodo = function(datos) {
    return promise;
 };
 
-var tercerMetodo = function(datos) {
-   var promise = new Promise(function(resolve, reject){
+let tercerMetodo = function(datos) {
+   let promise = new Promise(function(resolve, reject){
       setTimeout(function() {
          console.log('Terminó el tercer método');
          // console.log(datos.nuevosDatos); //imprimos los datos concatenados
@@ -43,9 +43,9 @@ var tercerMetodo = function(datos) {
 //    });
 // console.log('asas')
 let p1 = primerMetodo();
-var p2 = segundoMetodo();
-var p3 = tercerMetodo();
-var p = Promise.all([p1, p2, p3])
+let p2 = segundoMetodo();
+let p3 = tercerMetodo();
+let p = Promise.all([p1, p2, p3])
     .then(function(resultado){
         console.log(resultado); //un arreglo con los valores pasamos a resolve en cada metodo
     }).catch( function(err){
