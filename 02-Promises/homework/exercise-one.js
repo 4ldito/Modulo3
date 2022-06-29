@@ -60,13 +60,15 @@ function problemB() {
   //   blue(stanza3);
   // });
   // promise version
+  console.log('-- B. promise version (stanza two) --');
   promisifiedReadFile('poem-one/stanza-02.txt').then(data => {
-    console.log('-- B. promise version (stanza two) --');
-    blue(data);
-    return promisifiedReadFile('poem-one/stanza-03.txt');
-  }).then(data => {
     blue(data);
   });
+
+  promisifiedReadFile('poem-one/stanza-03.txt').then(data => {
+    blue(data);
+  });
+
 }
 
 function problemC() {

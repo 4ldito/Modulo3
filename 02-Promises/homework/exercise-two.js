@@ -37,17 +37,20 @@ function problemA() {
   //   }
   // );
   // promise version
-  magenta('Problema A')
-  Promise.all([promisifiedReadFile('poem-two/stanza-01.txt'),
-  promisifiedReadFile('poem-two/stanza-02.txt')])
+
+  // Haciendo esto, nos permitimos que se ejecute cualquiera de las dos promesas primero.
+  const promiseOne = promisifiedReadFile('poem-two/stanza-01.txt').then((stanza) => blue(stanza));
+  const promiseTwo = promisifiedReadFile('poem-two/stanza-02.txt').then((stanza) => blue(stanza));
+
+
+  // Promise.all([promisifiedReadFile('poem-two/stanza-01.txt'), promisifiedReadFile('poem-two/stanza-02.txt')])
+  Promise.all([promiseOne, promiseTwo]) // Y luego, cuando terminen todas las promesas, imprimimos el done
     .then(values => {
-      values.forEach(stanza => {
-        blue(stanza);
-      });
+      // values.forEach(stanza => {
+      //   blue(stanza);
+      // });
       console.log('done');
-    })//.catch(err => {
-  //   console.log(err.message)
-  // });
+    });
 }
 
 function problemB() {
@@ -58,8 +61,25 @@ function problemB() {
    *    nota: las lecturas ocurren en paralelo (en simultaneo)
    */
   let filenames = [1, 2, 3, 4, 5, 6, 7, 8].map(function (n) {
-    return 'poem-two/' + 'stanza-0' + n + '.txt';
+    //return 'poem-two/' + 'stanza-0' + n + '.txt';
+    return `poem-two/stanza-0${n}.txt`;
   });
+
+  const promises = filenames.map((file) => promisifiedReadFile(file).then((stanza) => blue(stanza)))
+
+  Promise.all(promises).then(() => {
+    console.log('done');
+  });
+
+  /*Promise.mapSeries(filenames, (filename) => {
+    return promisifiedReadFile(filename);
+  }).then(values => {
+    values.forEach((stanza) => {
+      blue(stanza);
+
+    });
+    console.log('done');
+  }); */
 
   // callback version
   // async.each(filenames,
@@ -75,17 +95,6 @@ function problemB() {
   //   }
   // );
   // promise version
-  magenta('Problema B')
-  Promise.mapSeries(filenames, (filename) => {
-    return promisifiedReadFile(filename);
-  }).then(values => {
-    values.forEach((stanza) => {
-      blue(stanza);
-    });
-  }).then(() => {
-    console.log('done');
-  });
-
 }
 
 function problemC() {
@@ -115,7 +124,6 @@ function problemC() {
   //   }
   // );
   // promise version
-  magenta('Problema C')
   Promise.mapSeries(filenames, (filename) => {
     return promisifiedReadFile(filename);
   }).then(values => {
@@ -157,15 +165,18 @@ function problemD() {
   // promise version
   Promise.mapSeries(filenames, (filename) => {
     return promisifiedReadFile(filename);
-  }).then(values => {
-    values.forEach((stanza, i) => {
-      blue(stanza);
-    });
-    console.log('done');
-  }).catch(err => {
-    magenta(new Error(err));
-    console.log('done');
-  });
+  })
+    .then(values => {
+      values.forEach((stanza) => {
+        blue(stanza);
+      });
+      // console.log('done'); 
+    })
+    .catch(err => {
+      magenta(new Error(err));
+      // console.log('done');
+    })
+    .finally(() => console.log('done'));
 }
 
 function problemE() {
