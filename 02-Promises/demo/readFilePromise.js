@@ -1,8 +1,6 @@
-var fs = require('fs');
+let fs = require('fs');
 
-
-
-var promise = new Promise(function(resolve, reject) {
+let promise = new Promise(function(resolve, reject) {
   // Hacer cosas acá dentro, probablemente asincrónicas.
   fs.readFile('./archivo.txt', 'utf8', function(err, data) { 
     if (err) {
@@ -13,8 +11,8 @@ var promise = new Promise(function(resolve, reject) {
   }); 
 });
 
-var nuevaDataPromesa = promise.then(function(data) {
-  var nuevaData = data.split('').splice(0, 100).join('');
+let nuevaDataPromesa = promise.then(function(data) {
+  let nuevaData = data.split('').splice(0, 100).join('');
   return nuevaData;
 })
 
@@ -22,36 +20,33 @@ console.log(promise);
 
 promise.then(function(data) {
   console.log('se cumplió la promesa');
+  //console.log(data);
 })
 
 
-var lectura;
+let lectura;
 fs.readFile('./archivo.txt', 'utf8', function(err, data) { 
   lectura = data;
 }); 
 
 console.log(lectura);
 
-
-
-
-
-   dataBase.verifyUser(username, password, (error, userInfo) => {
-       if (error) {
-           callback(error)
-       }else{
-           dataBase.getRoles(username, (error, roles) => {
-               if (error){
-                   callback(error)
-               }else {
-                   dataBase.logAccess(username, (error) => {
-                       if (error){
-                           callback(error);
-                       }else{
-                           callback(null, userInfo, roles);
-                       }
-                   })
-               }
-           })
-       }
-   })
+  //  dataBase.verifyUser(username, password, (error, userInfo) => {
+  //      if (error) {
+  //          callback(error)
+  //      }else{
+  //          dataBase.getRoles(username, (error, roles) => {
+  //              if (error){
+  //                  callback(error)
+  //              }else {
+  //                  dataBase.logAccess(username, (error) => {
+  //                      if (error){
+  //                          callback(error);
+  //                      }else{
+  //                          callback(null, userInfo, roles);
+  //                      }
+  //                  })
+  //              }
+  //          })
+  //      }
+  //  })
