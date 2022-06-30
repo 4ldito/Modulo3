@@ -33,7 +33,7 @@ Un servidor web es cualquier computadora o sistema que procese solicitudes (requ
 
 Este es el modelo simplificado de cualquier consulta a un servidor web.
 
-El cliente pide un recurso o servicio a un servidor, usando un mensaje en un formato standart (HTTP). El servidor recibe el mensaje, lo decodifica, realiza el servicio que se le pidió y devuelve el resultado en el mismo formato.
+El cliente pide un recurso o servicio a un servidor, usando un mensaje en un formato standard (HTTP). El servidor recibe el mensaje, lo decodifica, realiza el servicio que se le pidió y devuelve el resultado en el mismo formato.
 
 ## Qué necesitamos que tenga un servidor web en Node
 

@@ -1,14 +1,15 @@
-var http = require('http');
-var fs   = require('fs');
+let http = require('http');
+let fs   = require('fs');
 
 http.createServer( function(req, res){ 
+	console.log(req);
 	if( req.url === '/'){
 		res.writeHead(200, { 'Content-Type':'text/html' })
-		var html = fs.readFileSync(__dirname +'/html/index.html');
+		let html = fs.readFileSync(__dirname +'/html/index.html');
 		res.end(html);
 	}else if(req.url === '/api'){
 		res.writeHead(200, { 'Content-Type':'application/json' })
-		var obj = {
+		let obj = {
 			nombre: 'Juan',
 			apellido: 'Perez'
 		};	
