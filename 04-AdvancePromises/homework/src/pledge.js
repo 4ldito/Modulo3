@@ -23,6 +23,10 @@ class $Promise {
         this._callHandlers();
     }
 
+    catch(error) {
+        this.then(null, error);
+    }
+
     _internalResolve(info) {
         if (this._state === 'pending') {
             this._value = info;
@@ -35,17 +39,25 @@ class $Promise {
         if (this._state === 'pending') {
             this._value = reason;
             this._state = 'rejected';
+            this._callHandlers();
         }
     }
 
     _callHandlers() {
         if ((this._state !== 'pending') && (this._handlerGroups.length > 0)) {
-            // Ejecutamos el primer elemento y luego lo removemos.
-            this._handlerGroups.forEach(group => {
-                if (group.successCb) group.successCb(this._value);
-                if (group.errorCb) group.errorCb(this._value);
-            });
-
+            // Copiamos la variable handlerGroups para una mejor lectura
+            const groups = this._handlerGroups;
+            if (this._state === 'rejected') {
+                // const indexError = groups.findIndex((g) => g.errorCb !== false);
+                // if (indexError >= 0) groups[indexError].errorCb(this._value);
+                groups.forEach(group => {
+                    if (group.errorCb) group.errorCb(this._value);
+                });
+            } else {
+                groups.forEach(group => {
+                    if (group.successCb) group.successCb(this._value);
+                });
+            }
             this._handlerGroups = [];
         }
     }

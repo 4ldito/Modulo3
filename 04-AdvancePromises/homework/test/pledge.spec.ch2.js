@@ -144,7 +144,6 @@ describe('Una promise', function(){
     });
 
     it('llama todos los success handlers en orden una vez cuando son completados', function(){
-      console.log('Final?');
       promiseForNum.then( setFoo10 );
       promiseForNum.then( addToFoo );
       promiseForNum._internalResolve( 25 );

@@ -26,11 +26,11 @@ function noop () {}
 
 describe('Otra promise', function(){
 
-  var promiseForThing, log;
-  var logOops = jasmine.createSpy('logOops').and.callFake(function () {
+  let promiseForThing, log;
+  let logOops = jasmine.createSpy('logOops').and.callFake(function () {
     log.push({ code: 'oops' });
   });
-  var logInput = jasmine.createSpy('logInput').and.callFake(function (input) {
+  let logInput = jasmine.createSpy('logInput').and.callFake(function (input) {
     log.push(input);
   });
   beforeEach(function(){
@@ -42,7 +42,7 @@ describe('Otra promise', function(){
 
   describe('que todavía no es rechazada', function(){
 
-    xit('no llama a los errors handlers aún', function(){
+    it('no llama a los errors handlers aún', function(){
       promiseForThing.then( null, logOops );
       expect( logOops ).not.toHaveBeenCalled();
     });
@@ -51,7 +51,7 @@ describe('Otra promise', function(){
 
   describe('que ya esta rechazada', function(){
 
-    var theReason = { code: 'timed out' };
+    let theReason = { code: 'timed out' };
     beforeEach(function(){
       promiseForThing._internalReject( theReason );
     });
@@ -62,22 +62,22 @@ describe('Otra promise', function(){
     // those `handlerGroups`? There is going to have to be some
     // sort of "safety check" somewhere…
 
-    xit('no llama a ningún success handler', function(){
+    it('no llama a ningún success handler', function(){
       promiseForThing.then( logOops );
       expect( logOops ).not.toHaveBeenCalled();
     });
 
-    xit('llama un error handler agregado por `.then`', function(){
+    it('llama un error handler agregado por `.then`', function(){
       promiseForThing.then( null, logOops );
       expect( logOops ).toHaveBeenCalled();
     });
 
-    xit("llama un error handler pasando el valor de la promesa", function(){
+    it("llama un error handler pasando el valor de la promesa", function(){
       promiseForThing.then( null, logInput );
       expect( logInput ).toHaveBeenCalledWith( theReason );
     });
 
-    xit('llama una vez cada error handler adjuntado', function(){
+    it('llama una vez cada error handler adjuntado', function(){
       promiseForThing.then( null, logOops );
       promiseForThing.then( null, logInput );
       promiseForThing.then( null, logInput );
@@ -86,7 +86,7 @@ describe('Otra promise', function(){
       expect( logInput ).toHaveBeenCalledWith( theReason );
     });
 
-    xit('llama cada error handler en el orden agregado', function(){
+    it('llama cada error handler en el orden agregado', function(){
       promiseForThing.then( null, logOops );
       promiseForThing.then( null, logInput );
       expect( log ).toEqual( [{ code: 'oops'}, {code: 'timed out'}] );
@@ -96,15 +96,15 @@ describe('Otra promise', function(){
 
   describe('que ya tiene un error handler', function(){
 
-    var theReason = { code: 'unauthorized' };
+    let theReason = { code: 'unauthorized' };
 
-    xit('llama a ese handler cuando es rechazado', function(){
+    it('llama a ese handler cuando es rechazado', function(){
       promiseForThing.then( null, logInput );
       promiseForThing._internalReject( theReason );
       expect( logInput ).toHaveBeenCalledWith( theReason );
     });
 
-    xit('llama a todos sus errors handlers en orden una vez cuando es rechazado', function(){
+    it('llama a todos sus errors handlers en orden una vez cuando es rechazado', function(){
       promiseForThing.then( null, logInput );
       promiseForThing.then( null, logOops );
       promiseForThing._internalReject( theReason );
@@ -118,7 +118,7 @@ describe('Otra promise', function(){
 
   describe('con ambos success y error handlers', function(){
 
-    var ui;
+    let ui;
     beforeEach(function(){
       ui = {
         animals: ['kitten', 'puppy'],
@@ -136,19 +136,19 @@ describe('Otra promise', function(){
 
     });
 
-    xit('puede hacer cosas con data completada', function(){
+    it('puede hacer cosas con data completada', function(){
       promiseForThing._internalResolve({ animal: 'duckling' });
       expect( ui.animals[2] ).toBe( 'duckling' );
     });
 
-    xit('puede lidear con razones del reject', function(){
+    it('puede lidear con razones del reject', function(){
       promiseForThing._internalReject({ message: 'unauthorized' });
       expect( ui.warning ).toBe( 'unauthorized' );
     });
 
     // Opcional pero recomendable garbage collection
 
-    xit('descarta handlers que no son más necesarios', function(){
+    it('descarta handlers que no son más necesarios', function(){
       promiseForThing._internalResolve({ animal: 'chipmunk' });
       expect( promiseForThing._handlerGroups ).toEqual( [] );
     });
@@ -163,14 +163,14 @@ describe('Otra promise', function(){
 
 describe("Un metodo `.catch`", function(){
 
-  var promise;
+  let promise;
   beforeEach(function(){
      promise = new $Promise(noop);
      spyOn( promise, 'then' ).and.callThrough();
   });
   function myFunc (reason) { console.log(reason); }
 
-  xit('adjunta la función pasada como un error handler', function(){
+  it('adjunta la función pasada como un error handler', function(){
     promise.catch( myFunc );
     expect( promise.then ).toHaveBeenCalledWith( null, myFunc );
   });
@@ -181,9 +181,9 @@ describe("Un metodo `.catch`", function(){
   // que retornar aquí y arreglar `.catch` - esta vez, tomando los specs
   // del Cap 4 en cuenta.
 
-  xit('devuelve lo mismo que .then devolvería', function(){
-    var catchReturn = promise.catch( myFunc );
-    var thenReturn = promise.then( null, myFunc );
+  it('devuelve lo mismo que .then devolvería', function(){
+    let catchReturn = promise.catch( myFunc );
+    let thenReturn = promise.then( null, myFunc );
     [catchReturn, thenReturn].forEach(sanitize);
     // debería ser visualmente identico (pero no son necesariamente ===):
     expect( catchReturn ).toEqual( thenReturn );
