@@ -26,12 +26,12 @@ Capítulo 2: Adjuntando y llamando Promise Event Handlers
 function noop () {}
 
 // `then` es el core del comportamiento de las promesas. De hecho,
-// el P/A+ spec que foma los fundamentos del spec de ES6 solo cubre
+// el P/A+ spec que forma los fundamentos del spec de ES6 solo cubre
 // este método. La función `then` es usada para registrar *handlers*
-// si y cuando la promesa se completa o rechaza.
+// cuando la promesa se completa o rechaza.
 describe("El método .then de una promesa", function(){
 
-  var promise, s1, e1, s2, e2;
+  let promise, s1, e1, s2, e2;
   beforeEach(function(){
     promise = new $Promise(noop);
     s1 = function (/* data */)   { /* use data */ };
@@ -40,8 +40,8 @@ describe("El método .then de una promesa", function(){
     e2 = function (/* reason */) { /* handle reason */ };
   });
 
-  xit('agrega grupos de handlers (funciones callbacks) a la promesa', function(){
-    promise.then( s1, e1 );
+  it('agrega grupos de handlers (funciones callbacks) a la promesa', function(){
+    promise.then( s1, e1 ); 
     expect( promise._handlerGroups[0].successCb ).toBe( s1 );
     expect( promise._handlerGroups[0].errorCb   ).toBe( e1 );
   });
@@ -50,7 +50,7 @@ describe("El método .then de una promesa", function(){
   // el cual no es lo mismo que "chaining". Vamos a ver promise
   // chaining en el Cap. 4.
 
-  xit('puede ser llamado multiples veces para añadir mas handlers', function(){
+  it('puede ser llamado multiples veces para añadir mas handlers', function(){
     promise.then( s1, e1 );
     expect( promise._handlerGroups[0].successCb ).toBe( s1 );
     expect( promise._handlerGroups[0].errorCb   ).toBe( e1 );
@@ -59,7 +59,7 @@ describe("El método .then de una promesa", function(){
     expect( promise._handlerGroups[1].errorCb   ).toBe( e2 );
   });
 
-  xit('agrega un valor falso en lugar de callbacks que no son funciones en el success o error', function(){
+  it('agrega un valor falso en lugar de callbacks que no son funciones en el success o error', function(){
     promise.then( 'a string', {} );
     expect( promise._handlerGroups[0].successCb ).toBeFalsy();
     expect( promise._handlerGroups[0].errorCb   ).toBeFalsy();
@@ -73,11 +73,11 @@ describe("El método .then de una promesa", function(){
 
 describe('Una promise', function(){
 
-  var promiseForNum, foo;
-  var setFoo10 = jasmine.createSpy('setFoo10').and.callFake(function () {
+  let promiseForNum, foo;
+  let setFoo10 = jasmine.createSpy('setFoo10').and.callFake(function () {
     foo = 10;
   });
-  var addToFoo = jasmine.createSpy('addToFoo').and.callFake(function (num) {
+  let addToFoo = jasmine.createSpy('addToFoo').and.callFake(function (num) {
     foo += num;
   });
   beforeEach(function(){
@@ -89,32 +89,32 @@ describe('Una promise', function(){
 
   describe('que no se ha completado todavía', function(){
 
-    xit('no llama ningún success handler aún', function(){
+    it('no llama ningún success handler aún', function(){
       promiseForNum.then( setFoo10 );
       expect( setFoo10 ).not.toHaveBeenCalled();
     });
 
   });
 
-  describe('que ya esta completada', function(){
+  describe('Una promise que ya esta completada', function(){
 
     beforeEach(function(){
       promiseForNum._internalResolve( 25 );
     });
 
-    // Recomendado: agergá un método `._callHandlers` al prototipo de tu promesa
+    // Recomendado: agregá un método `._callHandlers` al prototipo de tu promesa
 
-    xit('llama al success handles agregado por `.then`', function(){
+    it('llama al success handles agregado por `.then`', function(){
       promiseForNum.then( setFoo10 );
       expect( setFoo10 ).toHaveBeenCalled();
     });
 
-    xit("llama un success handler pasando el valor de la promesa", function(){
+    it("llama un success handler pasando el valor de la promesa", function(){
       promiseForNum.then( addToFoo );
       expect( addToFoo ).toHaveBeenCalledWith( 25 );
     });
 
-    xit('llama a cada success handler, una vez por cada adhesión', function(){
+    it('llama a cada success handler, una vez por cada adhesión', function(){
       promiseForNum.then( setFoo10 );
       promiseForNum.then( addToFoo );
       promiseForNum.then( addToFoo );
@@ -123,7 +123,7 @@ describe('Una promise', function(){
       expect( addToFoo ).toHaveBeenCalledWith( 25 );
     });
 
-    xit('llama cada success handler cuando es añadido', function(){
+    it('llama cada success handler cuando es añadido', function(){
       promiseForNum.then( setFoo10 );
       expect( foo ).toBe( 10 );
       promiseForNum.then( addToFoo );
@@ -135,15 +135,16 @@ describe('Una promise', function(){
   // Entonces podemos correr callbacks si ya tenemos el valor.
   // ¿Pero qué pasa si el evento ocurre en orden opuesto?
 
-  describe('que ya tiene un success handler', function(){
+  describe('Una promise que ya tiene un success handler', function(){
 
-    xit('llama ese handler cuando es completado', function(){
+    it('llama ese handler cuando es completado', function(){
       promiseForNum.then( setFoo10 );
       promiseForNum._internalResolve();
       expect( setFoo10 ).toHaveBeenCalled();
     });
 
-    xit('llama todos los success handlers en orden una vez cuando son completados', function(){
+    it('llama todos los success handlers en orden una vez cuando son completados', function(){
+      console.log('Final?');
       promiseForNum.then( setFoo10 );
       promiseForNum.then( addToFoo );
       promiseForNum._internalResolve( 25 );
