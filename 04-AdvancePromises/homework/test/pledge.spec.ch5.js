@@ -42,15 +42,15 @@ function noop () {}
 
 describe('El método estático `$Promise.resolve`', function(){
 
-  xit('es una función, y no una que ya hemos escrito', function(){
+  it('es una función, y no una que ya hemos escrito', function(){
     expect( typeof $Promise.resolve ).toBe( 'function' );
-    var promise = new $Promise(noop);
+    let promise = new $Promise(noop);
     expect( $Promise.resolve ).not.toBe( promise._internalResolve );
   });
 
-  xit('toma un <valor plano A> y devuelve una <promesa para A>', function(){
+  it('toma un <valor plano A> y devuelve una <promesa para A>', function(){
     [42, 'hi', {}, undefined, /cool/, false].forEach(value => {
-      var promise = $Promise.resolve(value);
+      let promise = $Promise.resolve(value);
       expect( promise instanceof $Promise ).toBe( true );
       // No setea el estado y valor manualmente; llama un resolver.
       expect( promise._state ).toBe( 'fulfilled' );
@@ -60,9 +60,9 @@ describe('El método estático `$Promise.resolve`', function(){
 
   // Esto sería mas complejo con "then"s, pero vamos a ignorar eso.
 
-  xit('toma una <promesa para A> y devuelve la misma <promesa para A>', function(){
-    var firstPromise = new $Promise(noop);
-    var secondPromise = $Promise.resolve(firstPromise);
+  it('toma una <promesa para A> y devuelve la misma <promesa para A>', function(){
+    let firstPromise = new $Promise(noop);
+    let secondPromise = $Promise.resolve(firstPromise);
     expect( secondPromise ).toBe( firstPromise );
   });
 
@@ -74,12 +74,12 @@ describe('El método estático `$Promise.resolve`', function(){
   // Este spec debería ya funcionar si lo de arriba funciona.
   // Lee a través de las assertions y tratá de entender que demuestran.
 
-  xit('demuestra porque "resolved" y "fulfilled" no son sinónimos', function(){
-    var rejectedPromise = new $Promise(function (resolve, reject) {
+  it('demuestra porque "resolved" y "fulfilled" no son sinónimos', function(){
+    let rejectedPromise = new $Promise(function (resolve, reject) {
       reject();
     });
     // Y ahora la revelación:
-    var result = $Promise.resolve(rejectedPromise); // RESOLVIENDO...
+    let result = $Promise.resolve(rejectedPromise); // RESOLVIENDO...
     expect( result._state ).toBe( 'rejected' ); // ...pero RECHAZADA!
     // Hemos "resuelto" pero igual terminado con una promesa rechazada.
     // Asi que "resolve" realmente significa *intento* de completarla(fulfill).
@@ -96,16 +96,16 @@ describe('El método estático `$Promise.resolve`', function(){
 
 describe('El método estático `$Promise.all`', function(){
 
-  var SMALL_DELAY = 10;
-  var MAX_DELAY = 100;
+  let SMALL_DELAY = 10;
+  let MAX_DELAY = 100;
 
-  var values;
+  let values;
   beforeEach(function(){
     values = [42, 'hi', false, {}, undefined, [] ];
     jasmine.addMatchers(customMatchers);
   });
 
-  xit('es una función', function(){
+  it('es una función', function(){
     expect( typeof $Promise.all ).toBe( 'function' );
   });
 
@@ -113,7 +113,7 @@ describe('El método estático `$Promise.all`', function(){
   // [iterable](https://mzl.la/1SopN1G), pero esto va mas alla del
   // scope de Pledge. Nuestro `.all` solo necesita soportar arreglos.
 
-  xit('toma un solo argumento de un arreglo', function(){
+  it('toma un solo argumento de un arreglo', function(){
     // Pasando un arreglo dentro de `$Promise.all` causa ningún error.
     function callingAllWithArrays () {
       $Promise.all([]);
@@ -130,28 +130,28 @@ describe('El método estático `$Promise.all`', function(){
 
   // No parece tán dificil al principio.
 
-  xit('convierte un <arreglo de valores> a una <promesa para un arreglo de valores>', function (done) {
-    var promise = $Promise.all(values);
+  it('convierte un <arreglo de valores> a una <promesa para un arreglo de valores>', function (done) {
+    let promise = $Promise.all(values);
     expect( promise instanceof $Promise ).toBe(true);
     // La promesa debería completarse con los valores
     expect( promise ).toFulfillWith( values, done );
   });
 
   // Uh oh, se va volviendo un poco más difícil
-  xit('convierte un <arreglo de promesas> en una <promesa para un arreglo de valores>', function (done) {
-    var promises = values.map(value => $Promise.resolve(value));
-    var promise = $Promise.all(promises);
+  it('convierte un <arreglo de promesas> en una <promesa para un arreglo de valores>', function (done) {
+    let promises = values.map(value => $Promise.resolve(value));
+    let promise = $Promise.all(promises);
     // La promesa debería completarse con valores (no promesas por valores).
     expect( promise ).toFulfillWith( values, done );
   });
 
   // Sin atajos; cada elemento individual puede ser un valor o una promesa por un valor.
 
-  xit('convierte un <arreglo de valores y promesas> a una <promesa para un arreglo de valores>', function (done) {
-    var valuesAndPromises = values.map(value => {
+  it('convierte un <arreglo de valores y promesas> a una <promesa para un arreglo de valores>', function (done) {
+    let valuesAndPromises = values.map(value => {
       return Math.random() < 0.5 ? value : $Promise.resolve(value);
     });
-    var promise = $Promise.all(valuesAndPromises);
+    let promise = $Promise.all(valuesAndPromises);
     // la promesa debería completarse con valores (no una mezcla de promesas y valores).
     expect( promise ).toFulfillWith( values, done );
   });
@@ -172,11 +172,11 @@ describe('El método estático `$Promise.all`', function(){
   //acceder al eventual valor de la promesa? Vas a necesitar alterar
   // o aumentar tu enfoque aquí.
 
-  xit('convierte un <arreglo de promesas async> en una <promesa para un arreglo de valores>', function (done) {
-    var promises = values.map((value, i) => {
+  it('convierte un <arreglo de promesas async> en una <promesa para un arreglo de valores>', function (done) {
+    let promises = values.map((value, i) => {
       return slowPromise(value, SMALL_DELAY * (i + 1));
     });
-    var promise = $Promise.all(promises);
+    let promise = $Promise.all(promises);
     // la promesa debería completarse con valores…
     // …una vez que esos valores existen
     expect( promise ).toFulfillWith( values, done );
@@ -186,9 +186,9 @@ describe('El método estático `$Promise.all`', function(){
   // De alguna manera tenés que mantener rastro de que valores
   // van donde en el arreglo final
 
-  xit('convierte un <arreglo de promesas async> (completandose en orden random) en una <promesa para un arreglo de valores> (ordenadas por el index del arreglo original)', function (done) {
-    var promises = values.map(slowPromise); // delays random
-    var promise = $Promise.all(promises);
+  it('convierte un <arreglo de promesas async> (completandose en orden random) en una <promesa para un arreglo de valores> (ordenadas por el index del arreglo original)', function (done) {
+    let promises = values.map(slowPromise); // delays random
+    let promise = $Promise.all(promises);
     // la promesa debería completarse con valores, y en el
     // orden correcto también!
     expect( promise ).toFulfillWith( values, done );
@@ -196,41 +196,41 @@ describe('El método estático `$Promise.all`', function(){
 
   // Tan cerca ahora! ¿Qué pasa si una de las promesas falla?
 
-  xit('rechaza con <razon E> cuando uno de las promesas ingresadas rechaza con <razon E>', function (done) {
+  it('rechaza con <razon E> cuando uno de las promesas ingresadas rechaza con <razon E>', function (done) {
     // la promesa que rechaza luego de un random delay
-    var promiseThatRejects = new $Promise(noop);
-    var doomsday = Math.random * MAX_DELAY;
+    let promiseThatRejects = new $Promise(noop);
+    let doomsday = Math.random * MAX_DELAY;
     setTimeout(() => promiseThatRejects._internalReject('any Black Mirror episode'), doomsday);
     // un par de promesas que se van a completar en orden random
-    var promises = values.map(slowPromise);
+    let promises = values.map(slowPromise);
     // mandamos nuestra promesa condenada en algún lugar
-    var randomIndex = Math.floor(Math.random() * promises.length);
+    let randomIndex = Math.floor(Math.random() * promises.length);
     promises.splice(randomIndex, 0, promiseThatRejects);
     // espera por todo con $Promise.all
-    var promise = $Promise.all(promises);
+    let promise = $Promise.all(promises);
     // la promesa debería ser rechazada
     expect( promise ).toRejectWith( 'any Black Mirror episode', done );
   });
 
   // This probably already passes, but let's be sure. We're strict that way.
 
-  xit('no es afectado por rechazos adicionales', function (done) {
+  it('no es afectado por rechazos adicionales', function (done) {
     // las promesas que rechaza luego de un random delay
-    var doomed = new $Promise(noop);
-    var reallyDoomed = new $Promise(noop);
-    var doomsday = Math.random * MAX_DELAY;
-    var postApocalypse = doomsday + SMALL_DELAY;
+    let doomed = new $Promise(noop);
+    let reallyDoomed = new $Promise(noop);
+    let doomsday = Math.random * MAX_DELAY;
+    let postApocalypse = doomsday + SMALL_DELAY;
     setTimeout(() => doomed._internalReject('I am the first rejection'), doomsday);
     setTimeout(() => reallyDoomed._internalReject('I am too late, ignore me'), postApocalypse);
     // un par de promesas que se completan en orden random
-    var promises = values.map(slowPromise);
+    let promises = values.map(slowPromise);
     // mandamos nuestras promesas condenadas en algún lugar
-    var randomIndex1 = Math.floor(Math.random() * promises.length);
-    var randomIndex2 = Math.floor(Math.random() * promises.length);
+    let randomIndex1 = Math.floor(Math.random() * promises.length);
+    let randomIndex2 = Math.floor(Math.random() * promises.length);
     promises.splice(randomIndex1, 0, doomed);
     promises.splice(randomIndex2, 0, reallyDoomed);
     // espera por todo con $Promise.all
-    var promise = $Promise.all(promises);
+    let promise = $Promise.all(promises);
     // la promesa debería ser rechazada con la primera razón.
     expect( promise ).toRejectWith( 'I am the first rejection', done );
   });
