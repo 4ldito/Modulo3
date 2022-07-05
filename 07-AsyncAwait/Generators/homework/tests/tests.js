@@ -24,7 +24,6 @@ describe('Generator Function', () => {
   describe('fizzBuzzGenerator', () => {
     it('The generator is finite if a valid argument is passed in.', () => {
       const fizzBuzz = fizzBuzzGenerator(50)
-
       for (let i = 0; i < 100; i++) {
         if (i < 50) {
           expect(fizzBuzz.next()).to.deep.equal({
