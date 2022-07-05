@@ -1,8 +1,10 @@
 // const bodyParser = require("body-parser");
+'use strict';
 const express = require("express");
 
 const STATUS_USER_ERROR = 422;
 const STATUS_OK = 200;
+const STATUS_CREATED = 201;
 const STATUS_DONT_FOUND = 404;
 
 // This array of posts persists in memory across requests. Feel free
@@ -16,11 +18,10 @@ server.use(express.json());
 
 // TODO: your code to handle requests
 
-
 server.post('/posts', (req, res) => {
     const { author, contents, title } = req.body;
     if (!author || !contents || !title) {
-        res.status(STATUS_USER_ERROR).json({ error: "No se recibieron los parámetros necesarios para crear el Post" });
+        return res.status(STATUS_USER_ERROR).json({ error: "No se recibieron los parámetros necesarios para crear el Post" });
     } else {
         const newPost = { author, contents, title, id: id++ };
         posts.push(newPost);
@@ -32,7 +33,7 @@ server.post('/posts/author/:author', (req, res) => {
     const { contents, title } = req.body;
     const author = req.params.author;
     if (!author || !contents || !title) {
-        res.status(STATUS_USER_ERROR).json({ error: "No se recibieron los parámetros necesarios para crear el Post" });
+        return res.status(STATUS_USER_ERROR).json({ error: "No se recibieron los parámetros necesarios para crear el Post" });
     } else {
         const newPost = { author, contents, title, id: id++ };
         posts.push(newPost);
@@ -45,7 +46,7 @@ server.get("/posts", (req, res) => {
 
     if (term) {
         const newPosts = posts.filter(p => p.title.includes(term) || p.contents.includes(term));
-        res.status(STATUS_OK).json(newPosts);
+        return res.status(STATUS_OK).json(newPosts);
     } else {
         res.status(STATUS_OK).json(posts);
     }
@@ -56,7 +57,7 @@ server.get('/posts/:author', (req, res) => {
     const { author } = req.params;
     const authorPosts = posts.filter(p => p.author === author);
 
-    if (authorPosts.length > 0) res.status(STATUS_OK).json(authorPosts);
+    if (authorPosts.length) return res.status(STATUS_OK).json(authorPosts);
     else res.status(STATUS_USER_ERROR).json({ error: "No existe ningun post del autor indicado" });
 });
 
@@ -71,18 +72,26 @@ server.get('/posts/:author/:title', (req, res) => {
 
 server.put('/posts', (req, res) => {
     const { id, title, contents } = req.body;
-    const msgError = { error: "No se recibieron los parámetros necesarios para modificar el Post" };
 
     if (!id || !title || !contents) return res.status(STATUS_USER_ERROR).json({ error: "No se recibieron los parámetros necesarios para modificar el Post" });
+    //Con findIndex
 
-    const indexPost = posts.findIndex(p => p.id === id);
+    // const indexPost = posts.findIndex(p => p.id === id);
 
-    if (indexPost >= 0) {
-        posts[indexPost] = { ...posts[indexPost], title, contents }
-        res.status(STATUS_OK).json(posts[indexPost]);
-    } else {
-        res.status(STATUS_USER_ERROR).json({ error: `El id (${id}) recibido no es correcto` });
-    }
+    // if (indexPost >= 0) {
+    //     posts[indexPost] = { ...posts[indexPost], title, contents }
+    //     res.status(STATUS_OK).json(posts[indexPost]);
+    // } else {
+    //     res.status(STATUS_USER_ERROR).json({ error: `El id (${id}) recibido no es correcto` });
+    // }
+
+    // Con find
+    const post = posts.find((p) => p.id === id);
+
+    if (!post) return res.status(STATUS_USER_ERROR).json({ error: `El id (${id}) recibido no es correcto` });
+    post.title = title
+    post.contents = contents;
+    res.status(STATUS_OK).json(post);
 
 });
 
@@ -103,10 +112,12 @@ server.delete('/author', (req, res) => {
     const { author } = req.body;
     const authorPost = posts.filter(p => p.author === author);
 
-    if (authorPost.length > 0) res.status(STATUS_OK).json(authorPost);
-    else res.status(STATUS_USER_ERROR).json({ error: `No existe el autor indicado` });
-
-
+    if (authorPost.length > 0) {
+        posts = posts.filter(p => p.author === author); 
+        res.status(STATUS_OK).json(authorPost);
+    } else {
+        res.status(STATUS_USER_ERROR).json({ error: `No existe el autor indicado` });
+    }
 });
 
 
