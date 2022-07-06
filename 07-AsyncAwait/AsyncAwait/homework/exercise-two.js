@@ -1,13 +1,13 @@
 'use strict';
 
 let Promise = require('bluebird'),
-  async = require('async'),
-  exerciseUtils = require('./utils');
+  exerciseUtils = require('./utils'),
+  exerciseOne = require('./exercise-one.js');
 
-let readFile = exerciseUtils.readFile,
-  promisifiedReadFile = exerciseUtils.promisifiedReadFile,
+let promisifiedReadFile = exerciseUtils.promisifiedReadFile,
   blue = exerciseUtils.blue,
-  magenta = exerciseUtils.magenta;
+  magenta = exerciseUtils.magenta,
+  syncFunction = exerciseOne.syncFunction;
 
 let args = process.argv.slice(2).map(function (st) { return st.toUpperCase(); });
 
@@ -50,14 +50,9 @@ async function problemA() {
   // );
 
   // AsyncAwait version
-  const stanzaOne = promisifiedReadFile('poem-two/stanza-01.txt');
-  const stanzaTwo = promisifiedReadFile('poem-two/stanza-02.txt');
-  console.log(stanzaOne);
-  await Promise.all([stanzaTwo, stanzaOne,]).then((stanzas) => {
-    stanzas.forEach(stanza => blue(stanza));
-    console.log('done');
-  });
 
+  await Promise.all([syncFunction('poem-two/stanza-01.txt'), syncFunction('poem-two/stanza-02.txt')]);
+  console.log('done');
 }
 
 async function problemB() {
@@ -90,12 +85,10 @@ async function problemB() {
 
   // AsyncAwait version
 
-  const promises = filenames.map(name => promisifiedReadFile(name));
+  const promises = filenames.map(name => syncFunction(name));
 
-  await Promise.all(promises).then(stanzas => {
-    stanzas.forEach(stanza => blue(stanza));
-    console.log('done');
-  });
+  await Promise.all(promises);
+  console.log('done');
 
 }
 
@@ -132,10 +125,9 @@ async function problemC() {
 
   const promises = filenames.map(name => promisifiedReadFile(name));
 
-  await Promise.all(promises).then(stanzas => {
-    stanzas.forEach(stanza => blue(stanza));
-    console.log('done');
-  });
+  const stanzas = await Promise.all(promises);
+  stanzas.forEach(stanza => blue(stanza));
+  console.log('done');
 
 }
 
@@ -173,13 +165,14 @@ async function problemD() {
   // );
 
   // AsyncAwait version
-
-
   const promises = filenames.map(name => promisifiedReadFile(name));
 
-  await Promise.all(promises).then(stanzas => {
+  try {
+    const stanzas = await Promise.all(promises);
     stanzas.forEach(stanza => blue(stanza));
-  }).catch(err => magenta(new Error(err)))
-    .finally(() => console.log('done'));
-
+  } catch (error) {
+    magenta(new Error(error));
+  } finally {
+    console.log('done');
+  }
 }

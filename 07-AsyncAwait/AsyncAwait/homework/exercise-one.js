@@ -27,7 +27,8 @@ module.exports = {
   problemC: problemC,
   problemD: problemD,
   problemE: problemE,
-  problemF: problemF
+  problemF: problemF,
+  syncFunction
 };
 
 // corre cada problema dado como un argumento del command-line para procesar
@@ -35,6 +36,11 @@ args.forEach(function (arg) {
   let problem = module.exports['problem' + arg];
   if (problem) problem();
 });
+
+async function syncFunction(file) {
+  const stanza = await promisifiedReadFile(file);
+  blue(stanza);
+}
 
 async function problemA() {
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -55,7 +61,7 @@ async function problemA() {
 
 }
 
-async function problemB() {
+function problemB() {
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * *
    *
    * B. loggea el poema uno stanza dos y tres, en cualquier orden
@@ -74,12 +80,8 @@ async function problemB() {
   // });
 
   // AsyncAwait version
-  const stanzaTwo = await promisifiedReadFile('poem-one/stanza-02.txt');
-  const stanzaThree = await promisifiedReadFile('poem-one/stanza-03.txt');
-
-  blue(stanzaTwo);
-  blue(stanzaThree);
-
+  syncFunction('poem-one/stanza-02.txt');
+  syncFunction('poem-one/stanza-03.txt');
 }
 
 async function problemC() {
@@ -105,8 +107,10 @@ async function problemC() {
   // });
 
   // AsyncAwait version
-  const stanzaTwo = await promisifiedReadFile('poem-one/stanza-02.txt');
-  const stanzaThree = await promisifiedReadFile('poem-one/stanza-03.txt');
+
+  const promise = promisifiedReadFile('poem-one/stanza-02.txt');
+  const promise2 = promisifiedReadFile('poem-one/stanza-03.txt');
+  const [stanzaTwo, stanzaThree] = await Promise.all([promise, promise2]);
 
   blue(stanzaTwo);
   blue(stanzaThree);
@@ -159,9 +163,9 @@ async function problemE() {
 
   // AsyncAwait version
   try {
-    const stanzaTwo = await promisifiedReadFile('poem-one/stanza-03.txt');
-    const stanzaThree = await promisifiedReadFile('poem-one/wrong-file-name.txt');
-
+    const promise = promisifiedReadFile('poem-one/stanza-03.txt');
+    const promise2 = promisifiedReadFile('wrong-file-name.txt');
+    const [stanzaTwo, stanzaThree] = await Promise.all([promise, promise2]);
     blue(stanzaTwo);
     blue(stanzaThree);
   } catch (error) {
@@ -199,9 +203,9 @@ async function problemF() {
   // AsyncAwait version
 
   try {
-    const stanzaTwo = await promisifiedReadFile('poem-one/stanza-03.txt');
-    const stanzaThree = await promisifiedReadFile('poem-one/wrong-file-name.txt');
-
+    const promise = promisifiedReadFile('poem-one/stanza-03.txt');
+    const promise2 = promisifiedReadFile('wrong-file-name.txt');
+    const [stanzaTwo, stanzaThree] = await Promise.all([promise, promise2]);
     blue(stanzaTwo);
     blue(stanzaThree);
   } catch (error) {
